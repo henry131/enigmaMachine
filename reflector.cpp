@@ -12,11 +12,13 @@ Includes:	constructor
 #include <cstring>
 #include <cstdlib>
 #include "reflector.h"
+#include "errors.h"
 
 using namespace std;
 
 Reflector::Reflector(char* filename)
 {
+	error_code = 0;
 	ifstream in;
 	int a;
 	
@@ -44,11 +46,6 @@ Reflector::Reflector(char* filename)
 	}
 }
 
-Reflector::~Reflector()
-{
-	//Blank
-}
-
 int Reflector::output(int a)
 {
 	int i;
@@ -68,4 +65,19 @@ int Reflector::output(int a)
 	}
 	cout << "Error in  reflector pairs" << endl;
 	return a; 
+}
+
+int Reflector::get_error_code()
+{
+	return error_code;
+}
+
+void Reflector::print()
+{
+	cout << "Printing reflector configuration:" << endl;
+	for (int i = 0; i < MAX_SIZE; i++)
+	{
+		cout << i << " -> " << output(i) << endl;
+	}
+	
 }

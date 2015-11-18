@@ -15,7 +15,6 @@ class Rotor
 	bool fwd_encode;
 public:
 	Rotor(char* filename);
-	~Rotor();
 	void get_start_position(int position);
 	void set_start_position();
 	void reset_position();
@@ -25,7 +24,6 @@ public:
 	bool latch_triggered();
 	int output(int a);
 	void print();
-
 };
 
 #endif

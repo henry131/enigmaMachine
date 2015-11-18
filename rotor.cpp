@@ -11,6 +11,7 @@ Includes:	constructor
 #include <cstring>
 #include <cstdlib>
 #include "rotor.h"
+#include "errors.h"
 
 using namespace std;
 
@@ -29,8 +30,8 @@ Rotor::Rotor(char* filename)
 	{
 		if (count < SIZE)
 		{
-			fwd[count] = input - count;
-			bck[input] = count - input;
+			fwd[count] = input;
+			bck[input] = count;
 		}
 		else
 		{	
@@ -44,11 +45,6 @@ Rotor::Rotor(char* filename)
 	rotations = 0;
 }
 
-Rotor::~Rotor()
-{
-	//blank
-}
-
 void Rotor::get_start_position(int position)
 {
 	start_position = position;
@@ -57,7 +53,7 @@ void Rotor::get_start_position(int position)
 
 void Rotor::set_start_position()
 {
-	for (int i = 0; i <= start_position; i++)
+	for (int i = 0; i < start_position; i++)
 	{
 		rotate();
 	}
@@ -66,7 +62,7 @@ void Rotor::set_start_position()
 void Rotor::reset_position()
 {
 	int normalise = SIZE - (rotations % SIZE);
-	for (int i = 0; i <= normalise; i++)
+	for (int i = 0; i < normalise; i++)
 	{
 		rotate();
 	}
@@ -76,19 +72,23 @@ void Rotor::reset_position()
 void Rotor::rotate()
 {
 	//Store last element
-	int fwd_last_element = fwd[SIZE - 1];
-	int bck_last_element = bck[SIZE - 1];
+	int fwd_first_element = fwd[0];
+	int bck_first_element = bck[0];
 	//Shift all elements up 1
-	for (int i = SIZE - 2; i >= 0; i--)
+	for (int i = 0; i < SIZE - 1; i++)
 	{
-		fwd[i+1] = fwd[i];
-		bck[i+1] = bck[i];
+		fwd[i] = fwd[i+1];
+		bck[i] = bck[i+1];
 	}
 	//Return last elements to front
-	fwd[0] = fwd_last_element;
-	bck[0] = bck_last_element;
+	fwd[SIZE-1] = fwd_first_element;
+	bck[SIZE-1] = bck_first_element;
 	//tick up number of rotations
 	rotations++;
+	if (rotations == 26)
+	{
+		rotations = 0;
+	}
 }
 
 bool Rotor::latch_triggered()
@@ -114,19 +114,19 @@ int Rotor::output(int a)
 
 	if (fwd_encode)
 	{
-		output = a + fwd[a];
+		output = fwd[a] - rotations;
 	}
 	else
 	{
-		output = a + bck[a];
+		output = bck[a] - rotations;
 	}
 
 	if (output < 0)
 	{
-		return ((output % SIZE) + SIZE); 
+		return output + SIZE; 
 	}
 
-	return (output % SIZE);
+	return output;
 }
 
 void Rotor::set_fwd_encode()
