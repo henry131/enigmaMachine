@@ -16,20 +16,20 @@ Includes:	constructor
 
 using namespace std;
 
-Plugboard::Plugboard(char* filename)
+Plugboard::Plugboard()
 {
-	//Set error_code to no error status and input_size to 0
-	error_code = 0;
 	input_size = 0;
-	
+}
+
+int Plugboard::configure(const char* filename)
+{
 	//Open .pb file passed in command line
 	ifstream in;
 	in.open(filename);
 	if (!in)
 	{
-		cerr << "Unable to open Plugboard configuration file" << endl;
-		error_code = ERROR_OPENING_CONFIGURATION_FILE;
-		return;
+		cerr << "Plugboard: Error Opening Configuration File" << endl;
+		return ERROR_OPENING_CONFIGURATION_FILE;
 	}
 	
 	//Take first input from file into variable a
@@ -39,34 +39,33 @@ Plugboard::Plugboard(char* filename)
 	//Cycle through file putting input into plugboard_map array
 	while (!in.eof())
 	{
-		if (a < 0 || a > 25)
+		if (input_size >= MAX_SIZE)
 		{
-			cerr << filename << " contains number that is not between 0 & 25";
-			cerr << endl;
-			error_code = INVALID_INDEX;
-			in.close();
-			return;
+			cerr << "Incorrect Number of Plugboard Parameters Error" << endl;
+			return INCORRECT_NUMBER_OF_PLUGBOARD_PARAMETERS;
 		}
 		
-		//If a is not numeric character
-		//if a < 10 (direct ACSII char comp)
-		//If a > 10 
-		//error_code = NON_NUMERIC_CHARACTER;
-		//in.close();
-		//return;
-		
-		if (input_size > 0)
+		if ((in.peek()<48||in.peek()>59) && !isspace(in.peek()))
 		{
-			for (int i = 0; i < input_size; i++) 
+			cerr << "Plugboard: Non-numeric Character Error" << endl;
+			in.close();
+			return NON_NUMERIC_CHARACTER;
+		}
+		
+		if (a < 0 || a > 25)
+		{
+			cerr << "Plugboard: Invalid Index Error" << endl;;
+			in.close();
+			return INVALID_INDEX;
+		}
+
+		for (int i = 0; i < input_size; i++) 
+		{
+			if (a == plugboard_map[i])
 			{
-				if (a == plugboard_map[i])
-				{
-					cerr << filename << " attempted to pair contact with already";
-					cerr << "inputted contact in Plugboard" << endl;
-					error_code = IMPOSSIBLE_PLUGBOARD_CONFIGURATION;
-					in.close();
-					return;
-				}
+				cerr << "Impossible Plugboard Configuration Error" << endl;
+				in.close();
+				return IMPOSSIBLE_PLUGBOARD_CONFIGURATION;
 			}
 		}
 		
@@ -79,9 +78,8 @@ Plugboard::Plugboard(char* filename)
 	
 	if (input_size % 2 != 0)
 	{
-		cerr << filename << " contains an odd number of numbers" << endl;
-		error_code = INCORRECT_NUMBER_OF_PLUGBOARD_PARAMETERS;
-		return;
+		cerr << "Incorrect Number of Plugboard Parameters Error" << endl;
+		return INCORRECT_NUMBER_OF_PLUGBOARD_PARAMETERS;
 	}
 	
 	//Input -1 to rest of array to ensure no effect on encryption
@@ -89,10 +87,11 @@ Plugboard::Plugboard(char* filename)
 	{
 		plugboard_map[input_size] = -1;
 		input_size++;
-	}	
+	}
+	return 0;
 }
 
-int Plugboard::output(int a)
+int Plugboard::output(const int& a)
 {
 	int i;
 	for (i = 0; i < MAX_SIZE; i++)
@@ -110,11 +109,6 @@ int Plugboard::output(int a)
 		}
 	}
 	return a; 
-}
-
-int Plugboard::get_error_code()
-{
-	return error_code;
 }
 
 void Plugboard::print()

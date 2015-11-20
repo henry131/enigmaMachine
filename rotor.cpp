@@ -1,9 +1,7 @@
 /*---------------------------------------------------------
 Date: 12th November 2015
 Author: Henry Williams, hw5115, 01141713
-Description: Reflector Class
-Includes:	constructor
-		destructor (blank)			
+Description: Reflector Class			
 ---------------------------------------------------------*/
 
 #include <iostream>
@@ -15,37 +13,118 @@ Includes:	constructor
 
 using namespace std;
 
-Rotor::Rotor(char* filename)
+Rotor::Rotor()
 {
-	ifstream in;
-	in.open(filename);
-	if (!in)
-	{
-		cout << "Rotor file " << filename << "failed to open" << endl;
-		exit(1);
-	}
-	int input, count = 0;
-	in >> input;
-	while (!in.eof())
-	{
-		if (count < SIZE)
-		{
-			fwd[count] = input;
-			bck[input] = count;
-		}
-		else
-		{	
-			latch[count - SIZE] = input;
-		}
-		count++;
-		in >> input;
-	}
-	latches = count - SIZE;
-	in.close();
 	rotations = 0;
 }
 
-void Rotor::get_start_position(int position)
+int Rotor::configure (const char* filename)
+{
+	ifstream in;
+	in.open(filename);
+	
+	//Check for error opening file
+	if (!in)
+	{
+		cerr << "Rotor: Error Opening Configuration File" << endl;
+		return ERROR_OPENING_CONFIGURATION_FILE;
+	}
+	
+	int a;
+	int count = 0;
+	in >> a;
+	
+	while (!in.eof())
+	{
+	
+		//Check input is numeric character
+		if ((in.peek()<48||in.peek()>59) && !isspace(in.peek()))
+		{
+			cerr << "Rotor: Non-numeric Character Error" << endl;
+			in.close();
+			return NON_NUMERIC_CHARACTER;
+		}
+		
+		//Check input within range (0-25 : A-Z)
+		if (a < 0 || a > 25)
+		{
+			cerr << "Rotor: Invalid Index Error" << endl;;
+			in.close();
+			return INVALID_INDEX;
+		}
+		
+		//For first 26 inputs, set mapping arrays: forward and backwards
+		if (count < SIZE)
+		{
+			fwd[count] = a;
+			bck[a] = count;
+		}
+		
+		//Remaining inputs are notches
+		else
+		{
+		
+			//Check mapping provided for all 26 inputs by ensuring no duplicates
+			if (count == SIZE)
+			{
+				for (int i = 0; i < count; i++)
+				{
+					for (int j = i+1; j < count; j++)
+					{
+						if (fwd[j] == fwd[i])
+						{
+							cerr << "Invalid Rotor Mapping Error" << endl;
+							in.close();
+							return INVALID_ROTOR_MAPPING;
+						}
+					}  
+				}
+			}
+			
+			//Check no notch input is repeated
+			for (int i = 0; i < count - SIZE; i++)
+			{
+				if (a == notch[i])
+				{
+					cerr << "Invalid Rotor Mapping Error: repeated notch" << endl;
+					return INVALID_ROTOR_MAPPING;
+				}
+			}
+		
+			//Input notch into array
+			notch[count - SIZE] = a;
+			
+		}
+		
+		//Increment count and take next input into a
+		count++;
+		in >> a;
+		
+	}
+	
+	in.close();
+	
+	//If loop exits before 26 inputs, insufficient input for mapping rotor
+	if (count < SIZE)
+	{
+				cerr << "Invalid Rotor Mapping Error: insufficient mapping" << endl;
+				return INVALID_ROTOR_MAPPING;
+	}
+	
+	//If loop exits before 27 inputs, no notch mapped
+	else if (count < SIZE + 1)
+	{
+				cerr << "Invalid Rotor Mapping Error: no notch" << endl;
+				return INVALID_ROTOR_MAPPING;
+	}
+	
+	//Record number of notches on rotor
+	notches = count - SIZE;
+	
+	return 0;
+}
+
+void Rotor::input_start_position (const int& position)
 {
 	start_position = position;
 }
@@ -91,11 +170,11 @@ void Rotor::rotate()
 	}
 }
 
-bool Rotor::latch_triggered()
+bool Rotor::notch_triggered()
 {
-	for(int i = 0; i < latches; i++)
+	for(int i = 0; i < notches; i++)
 	{
-		if ((rotations % SIZE) == latch[i])
+		if ((rotations % SIZE) == notch[i])
 		{
 			return true;
 		} 
@@ -103,7 +182,7 @@ bool Rotor::latch_triggered()
 	return false;
 }
 
-int Rotor::output(int a)
+int Rotor::output(const int& a)
 {
 	if (a < 0 || a >= SIZE)
 	{
@@ -154,10 +233,10 @@ void Rotor::print()
 		cout << bck[i] << " ";
 	}
 	cout << endl;
-	cout << "Latch Position(s): ";
-	for (int i = 0; i < latches; i++)
+	cout << "Notch Position(s): ";
+	for (int i = 0; i < notches; i++)
 	{
-		cout << latch[i] << " ";
+		cout << notch[i] << " ";
 	}
 	cout <<endl;
 }

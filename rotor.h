@@ -10,19 +10,20 @@ class Rotor
 	int bck[SIZE];
 	int start_position;
 	int rotations;
-	int latches;
-	int latch[SIZE];
+	int notches;
+	int notch[SIZE];
 	bool fwd_encode;
 public:
-	Rotor(char* filename);
-	void get_start_position(int position);
+	Rotor();
+	int configure (const char* filename);
+	void input_start_position(const int& position);
 	void set_start_position();
 	void reset_position();
 	void set_fwd_encode();
 	void set_bck_encode();
 	void rotate();
-	bool latch_triggered();
-	int output(int a);
+	bool notch_triggered();
+	int output(const int& a);
 	void print();
 };
 

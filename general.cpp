@@ -2,9 +2,6 @@
 Date: 12th November 2015
 Author: Henry Williams, hw5115, 01141713
 Description: General fucntions for entire program
-Includes:	check valid input file names
-					char to int and int to char
-					encrypt function
 ---------------------------------------------------------*/
 
 #include <iostream>
@@ -13,7 +10,7 @@ Includes:	check valid input file names
 
 using namespace std;
 
-bool checkPbFileName (char* filename)
+bool checkPbFileName (const char* filename)
 {
 	int length = strlen(filename);
 	if (filename[length - 3]!='.')
@@ -25,7 +22,7 @@ bool checkPbFileName (char* filename)
 	return true;
 }
 
-bool checkRefFileName (char* filename)
+bool checkRefFileName (const char* filename)
 {
 	int length = strlen(filename);
 	if (filename[length - 3]!='.')
@@ -37,7 +34,7 @@ bool checkRefFileName (char* filename)
 	return true;
 }
 
-bool checkRotFileName (char* filename)
+bool checkRotFileName (const char* filename)
 {
 	int length = strlen(filename);
 	if (filename[length - 4]!='.')
@@ -51,7 +48,7 @@ bool checkRotFileName (char* filename)
 	return true;
 }
 
-bool checkRotPosFileName (char* filename)
+bool checkRotPosFileName (const char* filename)
 {
 	int length = strlen(filename);
 	if (filename[length - 4]!='.')
@@ -67,16 +64,22 @@ bool checkRotPosFileName (char* filename)
 
 char intToChar (int i)
 {
-	if (i < 0 || i > 25)
-		return '?';
 	return i + (int) 'A';
 }
 
 int charToInt (char c)
 {
-	if (c < 'A' || c > 'Z')
-		return -1;
 	return (c - 'A');
+}
+
+void intro_message ()
+{
+	cout << endl;
+	cout << "This is a program to simulate the encryption of the " << endl;
+	cout << "enigma machine. You should have passed in the command " << endl;
+	cout << "line the requisite files to configure the machine" << endl;
+	cout << "Please enter the text to encrypt in capital letters:" << endl;
+	cout << endl;
 }
 
 

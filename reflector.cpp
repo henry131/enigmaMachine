@@ -16,37 +16,73 @@ Includes:	constructor
 
 using namespace std;
 
-Reflector::Reflector(char* filename)
+Reflector::Reflector ()
 {
-	error_code = 0;
+//blank
+}
+
+int Reflector::configure (const char* filename)
+{
 	ifstream in;
 	int a;
+	int input_size = 0;
 	
 	in.open(filename);
 	if (!in)
 	{
-		cout << "Reflector file could not be opened" << endl;
-		exit(1);
+		cerr << "Reflector: Error Opening Configuration File" << endl;
+		return ERROR_OPENING_CONFIGURATION_FILE;
 	}
 
 	in >> a;
-	count = -1;
 
 	while (!in.eof())
-	{
-		count++;
-		reflector_map[count] = a;
+	{	
+		if (input_size >= MAX_SIZE)
+		{
+			cout << "Incorrect Number of Reflector Parameters" << endl;
+			return INCORRECT_NUMBER_OF_REFLECTOR_PARAMETERS;
+		}
+		
+		if ((in.peek()<48||in.peek()>59) && !isspace(in.peek()))
+		{
+			cerr << "Reflector: Non-numeric Character Error" << endl;
+			in.close();
+			return NON_NUMERIC_CHARACTER;
+		}
+		
+		if (a < 0 || a > 25)
+		{
+			cerr << "Reflector: Invalid Index Error" << endl;
+			in.close();
+			return INVALID_INDEX;
+		}
+		
+		for (int i = 0; i < input_size; i++) 
+		{
+			if (a == reflector_map[i])
+			{
+				cerr << "Invalid Reflector Mapping" << endl;
+				in.close();
+				return INVALID_REFLECTOR_MAPPING;
+			}
+		}
+		
+		reflector_map[input_size] = a;
+		input_size++;
 		in >> a;
 	}
 	in.close();
 
-	if (count != MAX_SIZE - 1)
+	if (input_size != MAX_SIZE)
 	{
-		cout << "Reflector pairs not complete" << endl;
+		cout << "Incorrect Number of Reflector Parameters" << endl;
+		return INCORRECT_NUMBER_OF_REFLECTOR_PARAMETERS;
 	}
+	return 0;
 }
 
-int Reflector::output(int a)
+int Reflector::output (const int& a)
 {
 	int i;
 	for (i = 0; i < MAX_SIZE; i++)
@@ -67,12 +103,7 @@ int Reflector::output(int a)
 	return a; 
 }
 
-int Reflector::get_error_code()
-{
-	return error_code;
-}
-
-void Reflector::print()
+void Reflector::print ()
 {
 	cout << "Printing reflector configuration:" << endl;
 	for (int i = 0; i < MAX_SIZE; i++)

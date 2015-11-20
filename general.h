@@ -2,19 +2,20 @@
 #define GENERAL_H
 
 //CHECK filename HAS VALID PLUGBOARD FILE EXTENSION
-bool checkPbFileName (char* filename);
+bool checkPbFileName (const char* filename);
 //CHECK filename HAS VALID REFLECTOR FILE EXTENSION
-bool checkRefFileName (char* filename);
+bool checkRefFileName (const char* filename);
 //CHECK filename HAS VALID ROTOR FILE EXTENSION
-bool checkRotFileName (char* filename);
+bool checkRotFileName (const char* filename);
 //CHECK filename HAS VALID ROTOR POSITIONING FILE EXTENSION
-bool checkRotPosFileName (char* filename);
+bool checkRotPosFileName (const char* filename);
 
 //CONVERT INTEGER i TO CORRESPONDING CHARACTER
 char intToChar (int i);
 //CONVERT CHARACTER c TO CORRESPONDING INTEGER
 int charToInt (char c);
 
-
+//PRINTS INTRODDUCTORY MESSAGE TO THE SCREEN
+void intro_message ();
 
 #endif
