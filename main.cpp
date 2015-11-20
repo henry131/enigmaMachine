@@ -24,7 +24,7 @@ Reflector* reflector;
 Rotor* rotors[26];
 
 // Debug triggers
-const bool debug = true;
+const bool debug = false;
 
 /*********************Function declarations**************************/
 
@@ -63,7 +63,8 @@ int main(int argc, char** argv)
 	
 	if (argc < 3)
 	{
-		cerr << "Insufficient Number of Parameters Error"<< endl;
+		cerr << "usage: enigma plugboard-file reflector-file";
+		cerr << "(<rotor-file>* rotor-positions)?"<< endl;
 		return INSUFFICIENT_NUMBER_OF_PARAMETERS;
 	}
 	
@@ -187,7 +188,10 @@ int main(int argc, char** argv)
 	
 	//Encryption input and output:
 	char character;
-	intro_message();
+	if (debug)
+	{
+		intro_message();
+	}
 	while (cin)
 	{
 			character = cin.get();
@@ -240,7 +244,8 @@ int rotor_positioning (const char* filename, const int& rotor_count)
 		
 		if ((in.peek()<48||in.peek()>59) && !isspace(in.peek()))
 		{
-			cerr << "Rotor Pos: Non-numeric Character Error" << endl;
+			cerr << "Non-numeric character in rotor positions file rotor.pos";
+			cerr << endl;
 			in.close();
 			return NON_NUMERIC_CHARACTER;
 		}

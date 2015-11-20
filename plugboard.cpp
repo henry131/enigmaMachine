@@ -41,21 +41,20 @@ int Plugboard::configure(const char* filename)
 	{
 		if (input_size >= MAX_SIZE)
 		{
-			cerr << "Incorrect Number of Plugboard Parameters Error" << endl;
+			cerr << "Incorrect number of parameters in plugboard file";
+			cerr << "plugboard.pb" << endl;
 			return INCORRECT_NUMBER_OF_PLUGBOARD_PARAMETERS;
 		}
 		
 		if ((in.peek()<48||in.peek()>59) && !isspace(in.peek()))
 		{
-			cerr << "Plugboard: Non-numeric Character Error" << endl;
-			in.close();
+			cerr << "Non-numeric character in plugboard file plugboard.pb" << endl;
 			return NON_NUMERIC_CHARACTER;
 		}
 		
 		if (a < 0 || a > 25)
 		{
 			cerr << "Plugboard: Invalid Index Error" << endl;;
-			in.close();
 			return INVALID_INDEX;
 		}
 
@@ -64,7 +63,6 @@ int Plugboard::configure(const char* filename)
 			if (a == plugboard_map[i])
 			{
 				cerr << "Impossible Plugboard Configuration Error" << endl;
-				in.close();
 				return IMPOSSIBLE_PLUGBOARD_CONFIGURATION;
 			}
 		}
@@ -78,7 +76,8 @@ int Plugboard::configure(const char* filename)
 	
 	if (input_size % 2 != 0)
 	{
-		cerr << "Incorrect Number of Plugboard Parameters Error" << endl;
+		cerr << "Incorrect number of parameters in plugboard file";
+		cerr << "plugboard.pb" << endl;
 		return INCORRECT_NUMBER_OF_PLUGBOARD_PARAMETERS;
 	}
 	

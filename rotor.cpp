@@ -40,8 +40,8 @@ int Rotor::configure (const char* filename)
 		//Check input is numeric character
 		if ((in.peek()<48||in.peek()>59) && !isspace(in.peek()))
 		{
-			cerr << "Rotor: Non-numeric Character Error" << endl;
-			in.close();
+			cerr << "Non-numeric character for mapping in rotor file";
+			cerr << "rotor.rot" << endl;
 			return NON_NUMERIC_CHARACTER;
 		}
 		
@@ -49,7 +49,6 @@ int Rotor::configure (const char* filename)
 		if (a < 0 || a > 25)
 		{
 			cerr << "Rotor: Invalid Index Error" << endl;;
-			in.close();
 			return INVALID_INDEX;
 		}
 		
@@ -74,7 +73,6 @@ int Rotor::configure (const char* filename)
 						if (fwd[j] == fwd[i])
 						{
 							cerr << "Invalid Rotor Mapping Error" << endl;
-							in.close();
 							return INVALID_ROTOR_MAPPING;
 						}
 					}  
@@ -107,7 +105,7 @@ int Rotor::configure (const char* filename)
 	//If loop exits before 26 inputs, insufficient input for mapping rotor
 	if (count < SIZE)
 	{
-				cerr << "Invalid Rotor Mapping Error: insufficient mapping" << endl;
+				cerr << "Not all inputs mapped in rotor file: rotor.rot" << endl;
 				return INVALID_ROTOR_MAPPING;
 	}
 	

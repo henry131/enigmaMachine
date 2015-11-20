@@ -40,21 +40,20 @@ int Reflector::configure (const char* filename)
 	{	
 		if (input_size >= MAX_SIZE)
 		{
-			cout << "Incorrect Number of Reflector Parameters" << endl;
+			cerr << "Incorrect (odd) number of parameters in reflector file";
+			cerr << "reflector.rf" << endl;
 			return INCORRECT_NUMBER_OF_REFLECTOR_PARAMETERS;
 		}
 		
 		if ((in.peek()<48||in.peek()>59) && !isspace(in.peek()))
 		{
-			cerr << "Reflector: Non-numeric Character Error" << endl;
-			in.close();
+			cerr << "Non-numeric character in reflector file reflector.rf" << endl;
 			return NON_NUMERIC_CHARACTER;
 		}
 		
 		if (a < 0 || a > 25)
 		{
 			cerr << "Reflector: Invalid Index Error" << endl;
-			in.close();
 			return INVALID_INDEX;
 		}
 		
@@ -63,7 +62,6 @@ int Reflector::configure (const char* filename)
 			if (a == reflector_map[i])
 			{
 				cerr << "Invalid Reflector Mapping" << endl;
-				in.close();
 				return INVALID_REFLECTOR_MAPPING;
 			}
 		}
@@ -76,7 +74,8 @@ int Reflector::configure (const char* filename)
 
 	if (input_size != MAX_SIZE)
 	{
-		cout << "Incorrect Number of Reflector Parameters" << endl;
+		cerr << "Insufficient number of mappings in reflector file: reflector.rf";
+		cerr << endl;
 		return INCORRECT_NUMBER_OF_REFLECTOR_PARAMETERS;
 	}
 	return 0;
