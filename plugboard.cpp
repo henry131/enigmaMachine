@@ -10,20 +10,23 @@ Includes:	constructor
 #include <iostream>
 #include <fstream>
 #include <cstring>
-#include <cstdlib>
 #include "plugboard.h"
 #include "errors.h"
 
 using namespace std;
 
-Plugboard::Plugboard()
+//Constructor
+
+Plugboard::Plugboard ()
 {
 	input_size = 0;
 }
 
-int Plugboard::configure(const char* filename)
+//Configures the plugboard mapping from input of filename
+//Will return relevant errors so that they can be returned from main
+
+int Plugboard::configure (const char* filename)
 {
-	//Open .pb file passed in command line
 	ifstream in;
 	in.open(filename);
 	if (!in)
@@ -32,12 +35,11 @@ int Plugboard::configure(const char* filename)
 		return ERROR_OPENING_CONFIGURATION_FILE;
 	}
 	
-	//Take first input from file into variable a
 	int a;
 	in >> a;
 	
 	//Cycle through file putting input into plugboard_map array
-	while (!in.eof())
+	while ( !in.eof() )
 	{
 		if (input_size >= MAX_SIZE)
 		{
@@ -46,21 +48,21 @@ int Plugboard::configure(const char* filename)
 			return INCORRECT_NUMBER_OF_PLUGBOARD_PARAMETERS;
 		}
 		
-		if ((in.peek()<48||in.peek()>59) && !isspace(in.peek()))
+		if ( (in.peek() < 48 || in.peek() > 59) && !isspace(in.peek()) )
 		{
 			cerr << "Non-numeric character in plugboard file plugboard.pb" << endl;
 			return NON_NUMERIC_CHARACTER;
 		}
 		
-		if (a < 0 || a > 25)
+		if ( a < 0 || a > 25 )
 		{
-			cerr << "Plugboard: Invalid Index Error" << endl;;
+			cerr << "Plugboard: Invalid Index Error" << endl;
 			return INVALID_INDEX;
 		}
 
 		for (int i = 0; i < input_size; i++) 
 		{
-			if (a == plugboard_map[i])
+			if ( a == plugboard_map[i] )
 			{
 				cerr << "Impossible Plugboard Configuration Error" << endl;
 				return IMPOSSIBLE_PLUGBOARD_CONFIGURATION;
@@ -74,28 +76,32 @@ int Plugboard::configure(const char* filename)
 	
 	in.close();
 	
-	if (input_size % 2 != 0)
+	if ( input_size % 2 != 0 )
 	{
-		cerr << "Incorrect number of parameters in plugboard file";
+		cerr << "Incorrect (odd) number of parameters in plugboard file";
 		cerr << " plugboard.pb" << endl;
 		return INCORRECT_NUMBER_OF_PLUGBOARD_PARAMETERS;
 	}
 	
-	//Input -1 to rest of array to ensure no effect on encryption
-	while (input_size < MAX_SIZE) 
+	//Input -1 to rest of array to ensure no effect on mapping (0-25)
+	while ( input_size < MAX_SIZE ) 
 	{
 		plugboard_map[input_size] = -1;
 		input_size++;
 	}
-	return 0;
+	
+	return NO_ERROR;
 }
 
-int Plugboard::output(const int& a)
+//Returns what int a maps to based on configuration contained in 
+//plugboard_map. int a must be within enigma range (0-25 : A-Z)
+
+int Plugboard::output (const int& a)
 {
 	int i;
 	for (i = 0; i < MAX_SIZE; i++)
 	{
-		if (plugboard_map[i] == a)
+		if ( plugboard_map[i] == a )
 		{
 			if ( (i % 2) == 0 )
 			{
@@ -110,12 +116,13 @@ int Plugboard::output(const int& a)
 	return a; 
 }
 
-void Plugboard::print()
+//Prints mapping of plugboard_map to standard output stream (debugging)
+
+void Plugboard::print ()
 {
 	cout << "Printing plugboard configuration:" << endl;
 	for (int i = 0; i < MAX_SIZE; i++)
 	{
 		cout << i << " -> " << output(i) << endl;
 	}
-	
 }

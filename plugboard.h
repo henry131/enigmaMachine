@@ -7,13 +7,17 @@ private:
 	int plugboard_map[MAX_SIZE];
 	int input_size;
 public:
-	//Construtor: initialises object so its value is string stored in a
+
+	//CONSTRUCTOR: SETS input_size TO ZERO
 	Plugboard ();
-	//
+	
+	//CONFIGURES PLUGBOARD MAPPING WITH INPUT FROM filename, RETURNS ERROR
 	int configure (const char* filename);
-	//Maps integer a and returns its corresponding pair based on the config
+	
+	//RETURNS OUTPUT AFTER INPUT a GOES THROUGH PLUGBOARD MAPPING
 	int output (const int& a);
-	//Prints plugbaord mapping configuration (for debugging)
+	
+	//PRINTS PLUGBOARD MAPPING (for debugging)
 	void print();
 };
 

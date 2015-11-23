@@ -3,16 +3,20 @@
 
 class Reflector {
 private:
-	static const int MAX_SIZE = 26;
-	int reflector_map[MAX_SIZE];
+	static const int SIZE = 26;
+	int reflector_map [SIZE];
 public:
-	//Construtor: initialises object
+
+	//CONSTRUCTOR (blank)
 	Reflector ();
-	//Fills reflector_map with input from filename checking for errors 
+	
+	//CONFIGURES REFLECTOR MAPPING WITH INPUT FROM filename, RETURNS ERROR
 	int configure (const char* filename);
-	//Maps integer a and returns its corresponding pair based on the config
+	
+	//RETURNS OUTPUT AFTER INPUT a GOES THROUGH REFLECTOR MAPPING
 	int output (const int& a);
-	//Prints plugbaord mapping configuration (for debugging)
+	
+	//PRINTS REFLECTOR MAPPING (for debugging)
 	void print ();
 };
 
