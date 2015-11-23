@@ -1,5 +1,5 @@
 /*---------------------------------------------------------
-Date: 12th November 2015
+Last Edited: 23rd November 2015
 Author: Henry Williams, hw5115, 01141713
 Description: General functions to support main function
 ---------------------------------------------------------*/
