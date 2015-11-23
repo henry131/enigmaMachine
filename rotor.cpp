@@ -41,7 +41,7 @@ int Rotor::configure (const char* filename)
 		if ((in.peek()<48||in.peek()>59) && !isspace(in.peek()))
 		{
 			cerr << "Non-numeric character for mapping in rotor file";
-			cerr << "rotor.rot" << endl;
+			cerr << " rotor.rot" << endl;
 			return NON_NUMERIC_CHARACTER;
 		}
 		

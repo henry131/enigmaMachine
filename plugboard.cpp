@@ -42,7 +42,7 @@ int Plugboard::configure(const char* filename)
 		if (input_size >= MAX_SIZE)
 		{
 			cerr << "Incorrect number of parameters in plugboard file";
-			cerr << "plugboard.pb" << endl;
+			cerr << " plugboard.pb" << endl;
 			return INCORRECT_NUMBER_OF_PLUGBOARD_PARAMETERS;
 		}
 		
@@ -77,7 +77,7 @@ int Plugboard::configure(const char* filename)
 	if (input_size % 2 != 0)
 	{
 		cerr << "Incorrect number of parameters in plugboard file";
-		cerr << "plugboard.pb" << endl;
+		cerr << " plugboard.pb" << endl;
 		return INCORRECT_NUMBER_OF_PLUGBOARD_PARAMETERS;
 	}
 	

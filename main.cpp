@@ -29,7 +29,7 @@ const bool debug = false;
 /*********************Function declarations**************************/
 
 //Sets starting position of rotors
-int rotor_positioning(const char* filename, const int& rotor_count);
+int rotor_positioning(const char* filename, int rotor_count);
 
 //Function to go through steps of engima machine
 //c is an upper case character to be encoded
@@ -59,12 +59,13 @@ int main(int argc, char** argv)
 		}
 	}
 	
-	// Check if sufficient commnand line parameters have been passed
+	//Check if sufficient commnand line parameters have been passed
+	//3 parameters can be passed (./enigma pb rf) but not 4 
 	
-	if (argc < 3)
+	if (argc < 3 || argc == 4)
 	{
 		cerr << "usage: enigma plugboard-file reflector-file";
-		cerr << "(<rotor-file>* rotor-positions)?"<< endl;
+		cerr << " (<rotor-file>* rotor-positions)?"<< endl;
 		return INSUFFICIENT_NUMBER_OF_PARAMETERS;
 	}
 	
@@ -117,8 +118,6 @@ int main(int argc, char** argv)
 	int index = 3;
 	int rotor_count = 0;
 	
-
-	
 	if (argc > index)
 	{
 	
@@ -129,12 +128,13 @@ int main(int argc, char** argv)
 			return INSUFFICIENT_NUMBER_OF_PARAMETERS;
 		}
 		
-			rotor_count = argc - index - 1;
+		rotor_count = argc - index - 1;
 	
 		if (debug)
 		{
-			cout << endl << rotor_count << " rotor(s) added" << endl;
+			cout << endl << rotor_count << " rotor(s) to be added" << endl;
 		}
+		
 		for (int i = rotor_count - 1; i >= 0; i--)
 		{	
 			if (checkRotFileName (argv[index]))
@@ -145,15 +145,18 @@ int main(int argc, char** argv)
 				{
 					return error;
 				}
+				
 				if (debug)
 				{
 					cout << endl;
-					cout << "/*Printing Rotor " << i+1 << " ("<< argv[index] << ")*/";
+					cout << "**Printing Rotor " << i+1 << " ("<< argv[index] << ")**";
 					cout << endl << endl;
 					rotors[i]->print();
 					cout << endl;
 				}
+				
 				index++;
+				
 			}
 			else
 			{
@@ -164,9 +167,9 @@ int main(int argc, char** argv)
 	
 	//Get rotors positioning (last arg)
 	
-		if (checkRotPosFileName (argv[argc-1]))
+	if (checkRotPosFileName (argv[rotor_count + 3]))
 		{	
-			error = rotor_positioning(argv[argc-1], rotor_count);
+			error = rotor_positioning(argv[rotor_count + 3], rotor_count);
 			if (error != 0)
 			{
 				return error;
@@ -188,10 +191,12 @@ int main(int argc, char** argv)
 	
 	//Encryption input and output:
 	char character;
+	
 	if (debug)
 	{
 		intro_message();
 	}
+	
 	while (cin)
 	{
 			character = cin.get();
@@ -201,7 +206,7 @@ int main(int argc, char** argv)
 			}
 			if (islower(character)||isdigit(character)||ispunct(character))
 			{
-				cerr << "Invalid Input Character: lower case" << endl;
+				cerr << "Invalid Input Character: " << character << endl;
 				return INVALID_INPUT_CHARACTER;
 			}
 			if (isupper(character))
@@ -209,7 +214,6 @@ int main(int argc, char** argv)
 				cout << encrypt(character, rotor_count);
 			}
 	}
-	cout << endl;
 
 	//Free memory
 	delete plugboard;
@@ -224,55 +228,81 @@ int main(int argc, char** argv)
 
 /*KEY FUNCTIONS*/
 
-int rotor_positioning (const char* filename, const int& rotor_count)
+int rotor_positioning (const char* filename, int rotor_count)
 {
 	ifstream in;
 	in.open(filename);
-	if (!in)
+	if (in.fail())
 	{
 		cerr << "Rotor Pos: Error Opening Configuration File" << endl;      
 		return ERROR_OPENING_CONFIGURATION_FILE;
 	}
-	int position = 0;
-	for (int i = rotor_count - 1; i >= 0; i--)
+	
+	int position;
+	in >> position;
+	
+	while (!in.eof() && (rotor_count - 1) >= 0)
 	{
-		if (in.eof())
-		{
-			cerr << "No Rotor Starting Position Error" << endl;
-			return NO_ROTOR_STARTING_POSITION;
-		}
-		
+		//Check for non-numeric input from file
 		if ((in.peek()<48||in.peek()>59) && !isspace(in.peek()))
 		{
 			cerr << "Non-numeric character in rotor positions file rotor.pos";
-			cerr << endl;
-			in.close();
 			return NON_NUMERIC_CHARACTER;
 		}
 		
-		in >> position;
-		
+		//Check for numeric input outside of range (0-25: A-Z) from file
 		if (position < 0 || position > 25)
 		{
-			cerr << "Position: Invalid Index Error" << endl;;
-			in.close();
+			cerr << "Invalid Index Error in rotor positions file rotor.pos";
 			return INVALID_INDEX;
 		}
-					
-		//invlaid index, non numeric character etc.
-		rotors[i]->input_start_position(position);
-		rotors[i]->set_start_position();
+		
+		//Set initial position of rotors
+		rotors[rotor_count - 1]->input_start_position(position);
+		rotors[rotor_count - 1]->set_start_position();
+		
 		if (debug)
 		{
 			cout << endl;
-			cout << "Rotor " << i + 1 << " starting position: " << position << endl;
-			cout << "/*Reprint after starting position adjustment*/" << endl;
+			cout << "Rotor " << rotor_count + 1 << " starting position: ";
+			cout << position << endl;
+			cout << "**Reprint after starting position adjustment**" << endl;
 			cout << endl;
-			rotors[i]->print();
+			rotors[rotor_count - 1]->print();
 			cout << endl;
 		}
+		
+		in >> position;
+		rotor_count--;
 	}
+	
+	//Check if position has been set for all rotors
+	if (rotor_count != 0)
+	{
+		cerr << "No Rotor Starting Position Error" << endl;
+		return NO_ROTOR_STARTING_POSITION;
+	}
+	
+	//Check to see if file is corrupted with invalid input past rotor_count
+	while (!in.eof())
+	{
+		if ((in.peek()<48||in.peek()>59) && !isspace(in.peek()))
+		{
+			cerr << "Non-numeric character in rotor positions file rotor.pos";
+			return NON_NUMERIC_CHARACTER;
+		}
+		
+		if (position < 0 || position > 25)
+		{
+			cerr << "Invalid Index Error in rotor positions file rotor.pos";
+			return INVALID_INDEX;
+		}
+		
+		in >> position;
+	}
+
 	in.close();
+	
 	return 0;
 }
 
@@ -348,10 +378,13 @@ void rotate_rotors (const int& count)
 	
 	rotors[0]->rotate();
 	
+	//Check if notch triggered - rotate next rotor
+	
 	for (int i = 0; i < count; i++)
 	{
 		if (rotors[i]->notch_triggered())
 		{
+			//Check if further rotor to one where notch triggered, if so rotate it
 			if (i+1 < count)
 			{
 				rotors[i+1]->rotate();

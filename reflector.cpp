@@ -41,7 +41,7 @@ int Reflector::configure (const char* filename)
 		if (input_size >= MAX_SIZE)
 		{
 			cerr << "Incorrect (odd) number of parameters in reflector file";
-			cerr << "reflector.rf" << endl;
+			cerr << " reflector.rf" << endl;
 			return INCORRECT_NUMBER_OF_REFLECTOR_PARAMETERS;
 		}
 		

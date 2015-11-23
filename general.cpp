@@ -6,7 +6,11 @@ Description: General fucntions for entire program
 
 #include <iostream>
 #include <cstring>
+#include "errors.h"
 #include "general.h"
+#include "plugboard.h"
+#include "reflector.h"
+#include "rotor.h"
 
 using namespace std;
 
@@ -81,6 +85,8 @@ void intro_message ()
 	cout << "Please enter the text to encrypt in capital letters:" << endl;
 	cout << endl;
 }
+
+
 
 
 
