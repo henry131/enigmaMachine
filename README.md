@@ -15,7 +15,7 @@ note there are sample
 	reflector configuration files in reflectors/
 	rotor configuration files in rotors/ (incl. starting rotor positions)
 	
-./enigma plugboard-file reflector-file (rotor-file* rotor-positions)?
+./enigma plugboard-file reflector-file (rotor-file(s) rotor-positions)?
 
 For example,
 
@@ -25,7 +25,7 @@ For example,
 Enigma Testing
 =======================================================
 
-To run tests (thanks to github user: ysn2233):
+To run tests (thanks to github user: ysn2233):
 
 ./run.sh
 
