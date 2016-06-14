@@ -13,9 +13,9 @@ To run the program:
 note there are sample
 	plugboard configuration files in plugboards/
 	reflector configuration files in reflectors/
-	rotor configuration files in rotors/ (incl. strating rotor positions)
+	rotor configuration files in rotors/ (incl. starting rotor positions)
 	
-./enigma plugboard-file reflector-file (<rotor-file>* rotor-positions)?
+./enigma plugboard-file reflector-file (rotor-file* rotor-positions)?
 
 For example,
 
