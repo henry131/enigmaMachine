@@ -1,17 +1,26 @@
-OBJ=main.o general.o plugboard.o reflector.o rotor.o
-EXE=enigma
-CXX=g++
-CPPFLAGS=-Wall -g -MMD
+EXEC      = enigma
+CC        = g++
+CFLAGS    = -c -Wall -Werror -pedantic -std=c++11
+LDFLAGS   =
 
-$(EXE): $(OBJ)
-	$(CXX) $(CPPFLAGS) $(OBJ) -o $(EXE)
+SRC_DIR   = src
+SOURCES   = $(wildcard $(SRC_DIR)/*.cpp)
 
-%.o: %.cpp
-	$(CXX) $(CPPFLAGS) -c $<
+OBJ_DIR   = bin
+OBJECTS = $(patsubst src/%.cpp, bin/%.o, $(SOURCES)) 
 
--include $(OBJ:.o=.d)
+.PHONY: all clean
 
-.PHONY: clean
+all: pre-build $(SOURCES) $(EXEC)
+
+pre-build:
+	mkdir -p $(OBJ_DIR)/
+	
+$(EXEC): $(OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $^
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -f $(OBJ) $(OBJ:.o=.d)
+	rm -f $(EXEC) $(OBJECTS)
