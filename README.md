@@ -1,3 +1,5 @@
+# enigmaMachine
+C++ Enigma Machine Simulator
 
 Enigma Use
 =======================================================
